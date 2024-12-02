@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResourceNotFoundException extends RuntimeException {
 
     public ResourceNotFoundException(String resourceName, String fieldName, String fieldValue) {
-        super(String.format("%application_qa.yml not found with the given input data %application_qa.yml : '%application_qa.yml'", resourceName, fieldName, fieldValue));
+        super(String.format("%s not found with the given input data %s : '%s'", resourceName, fieldName, fieldValue));
     }
 
 }
