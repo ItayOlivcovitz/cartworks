@@ -47,10 +47,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public boolean updateUser(Long id, UserDto userDto) {
-        Optional<User> userOptional = userRepository.findById(id);
+    public boolean updateUser(String email, UserDto userDto) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
-            throw new ResourceNotFoundException("User", "id", id.toString());
+            throw new ResourceNotFoundException("User", "email", email);
         }
 
         User user = UserMapper.mapToUser(userDto, userOptional.get());
@@ -67,4 +67,16 @@ public class UserServiceImpl implements IUserService {
         userRepository.deleteById(id);
         return true;
     }
+
+    @Override
+    public boolean deleteUserByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException("User", "email", email);
+        }
+
+        userRepository.delete(userOptional.get());
+        return true;
+    }
+
 }

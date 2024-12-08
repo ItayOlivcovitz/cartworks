@@ -3,6 +3,7 @@ package com.cartworks.users.controller;
 import com.cartworks.users.dto.ResponseDto;
 import com.cartworks.users.dto.UserDto;
 import com.cartworks.users.dto.ErrorResponseDto;
+import com.cartworks.users.repository.UserRepository;
 import com.cartworks.users.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class UsersController {
 
     private final IUserService userService;
+    private final UserRepository userRepository;
 
     @Operation(
             summary = "Create User REST API",
@@ -105,9 +107,9 @@ public class UsersController {
                     )
             )
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
-        boolean isUpdated = userService.updateUser(id, userDto);
+    @PutMapping("/{email}")
+    public ResponseEntity<ResponseDto> updateUser(@PathVariable String email, @Valid @RequestBody UserDto userDto) {
+        boolean isUpdated = userService.updateUser(email, userDto);
         if (isUpdated) {
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -138,9 +140,11 @@ public class UsersController {
                     )
             )
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteUser(@PathVariable Long id) {
-        boolean isDeleted = userService.deleteUser(id);
+    @DeleteMapping("/{email}")
+    public ResponseEntity<ResponseDto> deleteUser(@PathVariable String email) {
+        userRepository.existsByEmail(email);
+
+        boolean isDeleted = userService.deleteUserByEmail(email);
         if (isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -150,4 +154,6 @@ public class UsersController {
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ResponseDto("404", "User not found"));
     }
+
+
 }

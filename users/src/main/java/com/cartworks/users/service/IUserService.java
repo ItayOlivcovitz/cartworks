@@ -10,7 +10,10 @@ public interface IUserService {
 
     UserDto getUserByEmail(String email);
 
-    boolean updateUser(Long id, UserDto userDto);
+    boolean updateUser(String email, UserDto userDto);
 
     boolean deleteUser(Long id);
+
+    boolean deleteUserByEmail(String email);
+
 }
