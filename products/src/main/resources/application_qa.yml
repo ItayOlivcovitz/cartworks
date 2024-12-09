@@ -1,17 +1,16 @@
 spring:
-  profiles:
-    active: qa
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-    initialize: true
-  h2:
-    console:
-      enabled: true
+  config:
+    activate:
+      on-profile: "qa"
 
-logging:
-  level:
-    root: INFO
-    com.cartworks: DEBUG
+build:
+  version: "2.0"
+
+products:
+  message: "Welcome to Cartworks users related QA APIs "
+  contactDetails:
+    name: "Maayan Olivcovitz - QA Lead"
+    email: "Maayan.olivcovitz@cartworks.com"
+  onCallSupport:
+    - (054) 655-5142
+    - (052) 665-8784
