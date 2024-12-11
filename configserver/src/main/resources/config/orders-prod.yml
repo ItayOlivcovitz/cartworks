@@ -1,13 +1,8 @@
-spring:
-  config:
-    activate:
-      on-profile: "prod"
-
 build:
   version: "1.0"
 
 orders:
-  message: "Welcome to CartWorks users related prod APIs "
+  message: "Welcome to CartWorks orders related prod APIs "
   contactDetails:
     name: "Gali Olivcovitz - Product Owner"
     email: "gali.olivcovitz@cartworks.com"

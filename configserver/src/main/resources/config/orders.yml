@@ -1,0 +1,11 @@
+build:
+  version: "3.0"
+
+products :
+  message: "Welcome to CartWorks orders related local APIs "
+  contactDetails:
+    name: "Yaron Olivcovitz - Product Owner"
+    email: "yaron.olivcovitz@cartworks.com"
+  onCallSupport:
+    - (058) 565-9890
+    - (054) 441-323
