@@ -1,7 +1,7 @@
 build:
   version: "2.0"
 
-products:
+users:
   message: "Welcome to Cartworks users related QA APIs "
   contactDetails:
     name: "Maayan Olivcovitz - QA Lead"

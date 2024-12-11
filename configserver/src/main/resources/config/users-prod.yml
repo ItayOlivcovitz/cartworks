@@ -1,7 +1,7 @@
 build:
-  version: "1.0"
+  version: "3.0"
 
-products :
+users :
   message: "Welcome to CartWorks users related prod APIs "
   contactDetails:
     name: "Yaron Olivcovitz - Product Owner"
