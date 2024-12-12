@@ -32,3 +32,12 @@ products :
   onCallSupport:
     - (058) 565-9890
     - (054) 441-323
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+

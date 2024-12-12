@@ -4,7 +4,7 @@ spring:
   application:
     name: "users"
   profiles:
-    active: ""
+    active: "prod"
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -21,10 +21,11 @@ spring:
   config:
     import: "optional:configserver:http://localhost:8071/"
 
+
 build:
   version: "3.0"
 
-user:
+users:
   message: "Welcome to CartWorks users related local APIs "
   contactDetails:
     name: "Yaron Olivcovitz - Product Owner"
@@ -32,3 +33,11 @@ user:
   onCallSupport:
     - (058) 565-9890
     - (054) 441-323
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
