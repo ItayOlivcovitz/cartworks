@@ -1,0 +1,12 @@
+
+.idea/compiler.xml
+.idea/cartworks.iml
+.idea/encodings.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+/configserver/target
+/orders/target
+/products/target
+/users/target
