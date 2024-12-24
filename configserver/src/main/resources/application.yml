@@ -9,9 +9,9 @@ spring:
     config:
       server:
         native:
-        search-locations: "classpath:/config"
+        #search-locations: "classpath:/config"
         git:
-          uri: "https://github.com/ItayOlivcovitz/cartworks-config"
+          uri: "https://github.com/ItayOlivcovitz/cartworks-config.git"
           default-label: "main"
           timeout: 5
           clone-on-start: true

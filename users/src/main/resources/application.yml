@@ -4,7 +4,7 @@ spring:
   application:
     name: "users"
   profiles:
-    active: "prod"
+    active:
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -19,25 +19,13 @@ spring:
       ddl-auto: update
     show-sql: true
   config:
-    import: "optional:configserver:http://localhost:8071/"
+    import: "configserver:http://configserver:8071/"
   rabbitmq:
     host: "localhost"
     port: 5672
     username: "guest"
     password: "guest"
 
-
-build:
-  version: "3.0"
-
-users:
-  message: "Welcome to CartWorks users related local APIs "
-  contactDetails:
-    name: "Yaron Olivcovitz - Product Owner"
-    email: "yaron.olivcovitz@cartworks.com"
-  onCallSupport:
-    - (058) 565-9890
-    - (054) 441-323
 
 management:
   endpoints:

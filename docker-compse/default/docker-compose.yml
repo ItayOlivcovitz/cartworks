@@ -15,6 +15,7 @@ services:
       file: common-config.yml
       service: network-deploy-service
 
+
   configserver:
     image: "itayolivcovitz/configserver:s6"
     container_name: configserver-ms
@@ -44,14 +45,14 @@ services:
     environment:
       SPRING_APPLICATION_NAME: "users"
     extends:
-      file: common-config.yml
-      service: microservice-configserver-config
+        file: common-config.yml
+        service: microservice-configserver-config
 
   orders:
     image: "itayolivcovitz/orders:s6"
     container_name: orders-ms
     ports:
-      - "8090:8090"
+      - "9000:9000"
     depends_on:
       configserver:
         condition: service_healthy
@@ -60,12 +61,12 @@ services:
     extends:
       file: common-config.yml
       service: microservice-configserver-config
-
+#
   products:
     image: "itayolivcovitz/products:s6"
     container_name: products-ms
     ports:
-      - "9000:9000"
+      - "8090:8090"
     depends_on:
       configserver:
         condition: service_healthy
@@ -74,7 +75,10 @@ services:
     extends:
       file: common-config.yml
       service: microservice-configserver-config
+#
+
+
 
 networks:
   cartworks:
-    driver: "bridge"
+    driver: bridge
