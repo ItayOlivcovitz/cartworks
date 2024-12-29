@@ -1,20 +1,18 @@
 services:
   rabbit:
     image: rabbitmq:3.13-management
-    hostname: rabbitmq
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     healthcheck:
-      test: rabbitmq-diagnostics check_port_connectivity
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 5s
-    extends:
-      file: common-config.yml
-      service: network-deploy-service
-
+    networks:
+      - cartworks
 
   configserver:
     image: "itayolivcovitz/configserver:s6"
@@ -25,59 +23,127 @@ services:
       rabbit:
         condition: service_healthy
     healthcheck:
-      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8071/actuator/health/readiness | grep UP || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 10s
-    extends:
-      file: common-config.yml
-      service: microservice-base-config
+    networks:
+      - cartworks
 
   users:
     image: "itayolivcovitz/users:s6"
     container_name: users-ms
     ports:
       - "8080:8080"
-    depends_on:
-      configserver:
-        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "users"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://usersdb:3306/usersdb"
+    depends_on:
+      usersdb:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
     extends:
-        file: common-config.yml
-        service: microservice-configserver-config
+      file: common-config.yml
+      service: microservice-configserver-config
+    networks:
+      - cartworks
+
+  usersdb:
+    image: mysql
+    container_name: usersdb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: usersdb
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    networks:
+      - cartworks
 
   orders:
     image: "itayolivcovitz/orders:s6"
     container_name: orders-ms
     ports:
       - "9000:9000"
-    depends_on:
-      configserver:
-        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "orders"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://ordersdb:3306/ordersdb"
+    depends_on:
+      ordersdb:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
-#
+    networks:
+      - cartworks
+
+  ordersdb:
+    image: mysql
+    container_name: ordersdb
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: ordersdb
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    networks:
+      - cartworks
+
   products:
     image: "itayolivcovitz/products:s6"
     container_name: products-ms
     ports:
       - "8090:8090"
-    depends_on:
-      configserver:
-        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "products"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://productsdb:3306/productsdb"
+    depends_on:
+      productsdb:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-configserver-config
-#
+    networks:
+      - cartworks
 
-
+  productsdb:
+    image: mysql
+    container_name: productsdb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: productsdb
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-db-config
+    networks:
+      - cartworks
 
 networks:
   cartworks:
