@@ -1,6 +1,8 @@
 package com.cartworks.orders.exception;
 
 import com.cartworks.orders.dto.ErrorResponseDto;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -57,6 +59,30 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleConstraintViolationExceptions(ConstraintViolationException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> validationErrors = new HashMap<>();
+
+        // Extract validation errors
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            String fieldName = violation.getPropertyPath().toString(); // e.g., "getOrdersByUserEmail.userEmail"
+            String errorMessage = violation.getMessage(); // e.g., "Invalid email format"
+
+            // Extract only the parameter name (e.g., "userEmail") from the field path
+            String parameterName = fieldName.substring(fieldName.indexOf('.') + 1);
+            validationErrors.put(parameterName, errorMessage);
+        }
+
+        // Build response
+        response.put("apiPath", ex.getMessage()); // You can customize this
+        response.put("errorCode", "BAD_REQUEST");
+        response.put("errorMessage", validationErrors);
+        response.put("errorTime", LocalDateTime.now());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 

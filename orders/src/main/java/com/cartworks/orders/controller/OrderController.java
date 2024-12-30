@@ -12,14 +12,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
 @RestController
 @RequestMapping("/api/orders")
 @Tag(
@@ -96,7 +100,7 @@ public class OrderController {
             )
     })
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDto> getOrder(@PathVariable Long orderId) {
+    public ResponseEntity<OrderDto> getOrder(@PathVariable @Valid @Pattern(regexp = "\\d+", message = "Invalid order ID format") Long orderId) {
         OrderDto order = orderService.getOrder(orderId);
         return ResponseEntity.ok(order);
     }
@@ -134,12 +138,51 @@ public class OrderController {
                 .body(new ResponseDto("404", "Order not found"));
     }
 
+@Operation(
+        summary = "Get Orders by User Email REST API",
+        description = "REST API to retrieve a list of orders by user email"
+)
+@ApiResponses({
+        @ApiResponse(
+                responseCode = "200",
+                description = "HTTP Status OK",
+                content = @Content(
+                        schema = @Schema(implementation = OrderDto.class)
+                )
+        ),
+        @ApiResponse(
+                responseCode = "404",
+                description = "No orders found for the given email",
+                content = @Content(
+                        schema = @Schema(implementation = ErrorResponseDto.class)
+                )
+        )
+})
+@GetMapping("user/fetchByEmail/{userEmail}")
+public ResponseEntity<List<OrderDto>> getOrdersByUserEmail(
+        @PathVariable @Valid
+        @Pattern(
+                regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+                message = "Invalid email format"
+        ) String userEmail) {
+    List<OrderDto> orders = orderService.getOrdersByUserEmail(userEmail);
+    if (orders.isEmpty()) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Collections.emptyList());
+    }
+    return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(orders);
+}
+
     @Operation(
             summary = "Delete Order REST API",
             description = "REST API to delete order details by ID"
     )
     @ApiResponses({
             @ApiResponse(
+
                     responseCode = "200",
                     description = "HTTP Status OK",
                     content = @Content(

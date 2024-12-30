@@ -3,6 +3,8 @@ package com.cartworks.orders.service;
 
 import com.cartworks.orders.dto.OrderDto;
 
+import java.util.List;
+
 public interface IOrderService {
     /**
      * Create a new order.
@@ -36,4 +38,12 @@ public interface IOrderService {
      * @return true if the order was successfully deleted, false otherwise
      */
     boolean deleteOrder(Long orderId);
+
+    /**
+     * Retrieve all orders by user email.
+     *
+     * @param userEmail The user email to retrieve orders for
+     * @return List of OrderDto containing order details
+     */
+    List<OrderDto> getOrdersByUserEmail(String userEmail);
 }

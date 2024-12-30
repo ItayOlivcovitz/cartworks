@@ -131,4 +131,16 @@ public class OrderServiceImpl implements IOrderService {
         }
         throw  new  ResourceNotFoundException("Order", "ID", String.valueOf(orderId));
     }
+
+    @Override
+    public List<OrderDto> getOrdersByUserEmail(String userEmail) {
+        List<Order> orders = orderRepository.findByUserEmail(userEmail);
+
+        if(orders.isEmpty()) {
+            throw new ResourceNotFoundException("Order", "email", userEmail);
+        }
+        return orders.stream()
+                .map(OrderMapper::mapToOrderDto)
+                .collect(Collectors.toList());
+    }
 }
