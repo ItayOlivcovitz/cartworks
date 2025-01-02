@@ -1,6 +1,6 @@
 package com.cartworks.products.mapper;
 
-import com.cartworks.products.dto.ProductDto;
+import com.cartworks.products.dto.ProductsDto;
 import com.cartworks.products.entity.Category;
 import com.cartworks.products.entity.Product;
 import com.cartworks.products.repository.CategoryRepository;
@@ -14,8 +14,8 @@ public class ProductMapper {
     private final CategoryRepository categoryRepository;
 
     // Convert Product entity to ProductDto
-    public ProductDto mapToProductDto(Product product) {
-        ProductDto productDto = new ProductDto();
+    public ProductsDto mapToProductDto(Product product) {
+        ProductsDto productDto = new ProductsDto();
         productDto.setId(product.getId());
         productDto.setName(product.getName());
         productDto.setDescription(product.getDescription());
@@ -33,7 +33,7 @@ public class ProductMapper {
     }
 
     // Convert ProductDto to Product entity
-    public Product mapToProduct(ProductDto productDto, Product product) {
+    public Product mapToProduct(ProductsDto productDto, Product product) {
         product.setName(productDto.getName());
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());

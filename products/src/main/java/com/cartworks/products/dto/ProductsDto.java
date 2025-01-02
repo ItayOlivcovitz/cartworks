@@ -1,12 +1,17 @@
 package com.cartworks.products.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class ProductDto {
+@Schema(
+        name = "ProductDto",
+        description = "Schema to hold product information"
+)
+public class ProductsDto {
 
     private Long id;
 

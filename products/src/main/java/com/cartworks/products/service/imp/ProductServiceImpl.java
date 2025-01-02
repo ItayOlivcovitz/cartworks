@@ -1,6 +1,6 @@
 package com.cartworks.products.service.imp;
 
-import com.cartworks.products.dto.ProductDto;
+import com.cartworks.products.dto.ProductsDto;
 import com.cartworks.products.entity.Product;
 import com.cartworks.products.exception.ProductAlreadyExistsException;
 import com.cartworks.products.exception.ResourceNotFoundException;
@@ -22,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper; // Injected ProductMapper
 
     @Override
-    public void createProduct(ProductDto productDto) {
+    public void createProduct(ProductsDto productDto) {
         // Check if a product with the same name already exists
         if (productRepository.findByName(productDto.getName()).isPresent()) {
             throw new ProductAlreadyExistsException("Product already exists with the given name: " + productDto.getName());
@@ -34,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto getProductById(Long id) {
+    public ProductsDto getProductById(Long id) {
         // Find product by ID or throw an exception if not found
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id.toString()));
@@ -44,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean updateProduct(Long id, ProductDto productDto) {
+    public boolean updateProduct(Long id, ProductsDto productDto) {
         // Check if the product exists
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id.toString()));
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getAllProducts() {
+    public List<ProductsDto> getAllProducts() {
         // Retrieve all products and map them to ProductDto
         return productRepository.findAll().stream()
                 .map(productMapper::mapToProductDto)

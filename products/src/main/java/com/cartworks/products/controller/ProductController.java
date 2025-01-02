@@ -1,6 +1,6 @@
 package com.cartworks.products.controller;
 
-import com.cartworks.products.dto.ProductDto;
+import com.cartworks.products.dto.ProductsDto;
 import com.cartworks.products.dto.ResponseDto;
 import com.cartworks.products.dto.ErrorResponseDto;
 import com.cartworks.products.service.ProductService;
@@ -50,7 +50,7 @@ public class ProductController {
             )
     })
     @PostMapping
-    public ResponseEntity<ResponseDto> createProduct(@Valid @RequestBody ProductDto productDto) {
+    public ResponseEntity<ResponseDto> createProduct(@Valid @RequestBody ProductsDto productDto) {
         productService.createProduct(productDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -67,7 +67,7 @@ public class ProductController {
                     responseCode = "200",
                     description = "Product retrieved successfully",
                     content = @Content(
-                            schema = @Schema(implementation = ProductDto.class)
+                            schema = @Schema(implementation = ProductsDto.class)
                     )
             ),
             @ApiResponse(
@@ -79,8 +79,8 @@ public class ProductController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
-        ProductDto productDto = productService.getProductById(id);
+    public ResponseEntity<ProductsDto> getProductById(@PathVariable Long id) {
+        ProductsDto productDto = productService.getProductById(id);
         return ResponseEntity.status(HttpStatus.OK).body(productDto);
     }
 
@@ -98,8 +98,8 @@ public class ProductController {
             )
     })
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
-        List<ProductDto> products = productService.getAllProducts();
+    public ResponseEntity<List<ProductsDto>> getAllProducts() {
+        List<ProductsDto> products = productService.getAllProducts();
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
@@ -124,10 +124,10 @@ public class ProductController {
             )
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto<ProductDto>> updateProduct(@PathVariable Long id,
-                                                                 @Valid @RequestBody ProductDto productDto) {
+    public ResponseEntity<ResponseDto<ProductsDto>> updateProduct(@PathVariable Long id,
+                                                                  @Valid @RequestBody ProductsDto productDto) {
         productService.updateProduct(id, productDto); // Throws ResourceNotFoundException if the product doesn't exist
-        ProductDto updatedProduct = productService.getProductById(id);
+        ProductsDto updatedProduct = productService.getProductById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto<>(

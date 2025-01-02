@@ -1,19 +1,19 @@
 package com.cartworks.products.service;
 
-import com.cartworks.products.dto.ProductDto;
+import com.cartworks.products.dto.ProductsDto;
 
 import java.util.List;
 
 public interface ProductService {
 
-    void createProduct(ProductDto productDto);
+    void createProduct(ProductsDto productDto);
 
-    ProductDto getProductById(Long id);
+    ProductsDto getProductById(Long id);
 
-    boolean updateProduct(Long id, ProductDto productDto);
+    boolean updateProduct(Long id, ProductsDto productDto);
 
     boolean deleteProduct(Long id);
 
-    List<ProductDto> getAllProducts(); // Added method
+    List<ProductsDto> getAllProducts(); // Added method
 
 }
