@@ -12,9 +12,7 @@ import com.cartworks.orders.service.IOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,7 +46,8 @@ public class OrderServiceImpl implements IOrderService {
         Set<OrderItem> orderItems = orderDto.getItems().stream()
                 .map(itemDto -> OrderItem.builder()
                         .order(order) // Set the order reference to avoid recursion
-                        .productName(itemDto.getProductName())
+                        .productId(itemDto.getProductId())
+//                        .productName(itemDto.getProductName())
                         .quantity(itemDto.getQuantity())
                         .price(itemDto.getPrice())
                         .build())
@@ -96,7 +95,7 @@ public class OrderServiceImpl implements IOrderService {
         // Find and update existing items or add new ones
         for (OrderItemDto itemDto : orderDto.getItems()) {
             OrderItem existingItem = currentItems.stream()
-                    .filter(item -> item.getProductName().equals(itemDto.getProductName())) // Assuming productName is unique
+                    //.filter(item -> item.getProductName().equals(itemDto.getProductName())) // Assuming productName is unique
                     .findFirst()
                     .orElse(null);
 
@@ -112,8 +111,8 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         // Remove items not present in the new list
-        currentItems.removeIf(existingItem -> orderDto.getItems().stream()
-                .noneMatch(dto -> dto.getProductName().equals(existingItem.getProductName())));
+//        currentItems.removeIf(existingItem -> orderDto.getItems().stream()
+//                .noneMatch(dto -> dto.getProductName().equals(existingItem.getProductName())));
 
         // Save the updated order
         Order updatedOrder = orderRepository.save(existingOrder);

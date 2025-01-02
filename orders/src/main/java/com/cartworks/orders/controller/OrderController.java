@@ -1,7 +1,7 @@
 package com.cartworks.orders.controller;
 
 import com.cartworks.orders.dto.OrderDto;
-import com.cartworks.orders.dto.OrdersContactInfoDto;
+import com.cartworks.orders.dto.OrderContactInfoDto;
 import com.cartworks.orders.dto.ResponseDto;
 import com.cartworks.orders.dto.ErrorResponseDto;
 import com.cartworks.orders.service.IOrderService;
@@ -13,13 +13,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -42,7 +41,7 @@ public class OrderController {
     private  Environment environment;
 
     @Autowired
-    private  OrdersContactInfoDto ordersContactInfoDto;
+    private OrderContactInfoDto ordersContactInfoDto;
 
     @Operation(
             summary = "Create Order REST API",
@@ -100,7 +99,7 @@ public class OrderController {
             )
     })
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDto> getOrder(@PathVariable @Valid @Pattern(regexp = "\\d+", message = "Invalid order ID format") Long orderId) {
+    public ResponseEntity<OrderDto> getOrder(@PathVariable @Valid @Positive(message = "Order ID must be a positive number") Long orderId) {
         OrderDto order = orderService.getOrder(orderId);
         return ResponseEntity.ok(order);
     }
@@ -261,7 +260,7 @@ public ResponseEntity<List<OrderDto>> getOrdersByUserEmail(
     }
     )
     @GetMapping("/contact-info")
-    public ResponseEntity<OrdersContactInfoDto> getContactInfo() {
+    public ResponseEntity<OrderContactInfoDto> getContactInfo() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ordersContactInfoDto);

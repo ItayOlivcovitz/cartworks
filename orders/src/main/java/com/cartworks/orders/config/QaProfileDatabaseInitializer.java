@@ -25,7 +25,7 @@ public class QaProfileDatabaseInitializer implements CommandLineRunner {
     public void run(String... args) {
         // Create Order 1
         Order order1 = Order.builder()
-                .userEmail("qauser1@example.com")
+                .userEmail("itay.olivcovitz@gmail.com")
                 .orderDate(LocalDate.now())
                 .totalAmount(150.0)
                 .status(OrderStatus.PENDING)
@@ -33,14 +33,14 @@ public class QaProfileDatabaseInitializer implements CommandLineRunner {
 
         OrderItem item1 = OrderItem.builder()
                 .order(order1)
-                .productName("Test Product A")
+                .productId(1L)
                 .quantity(1)
                 .price(50.0)
                 .build();
 
         OrderItem item2 = OrderItem.builder()
                 .order(order1)
-                .productName("Test Product B")
+                .productId(2L)
                 .quantity(2)
                 .price(50.0)
                 .build();
@@ -49,7 +49,7 @@ public class QaProfileDatabaseInitializer implements CommandLineRunner {
 
         // Create Order 2
         Order order2 = Order.builder()
-                .userEmail("qauser2@example.com")
+                .userEmail("itay.olivcovitz@gmail.com")
                 .orderDate(LocalDate.now().minusDays(2))
                 .totalAmount(300.0)
                 .status(OrderStatus.SHIPPED)
@@ -57,7 +57,7 @@ public class QaProfileDatabaseInitializer implements CommandLineRunner {
 
         OrderItem item3 = OrderItem.builder()
                 .order(order2)
-                .productName("Test Product C")
+                .productId(1L)
                 .quantity(3)
                 .price(100.0)
                 .build();

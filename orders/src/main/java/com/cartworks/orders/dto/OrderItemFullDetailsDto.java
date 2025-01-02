@@ -10,10 +10,10 @@ import lombok.Data;
         name = "OrderItemDto",
         description = "Schema to hold OrderItem information"
 )
-public class OrderItemDto {
+public class OrderItemFullDetailsDto {
 
-    @NotBlank(message = "Product name is required")
-    private long productId;
+    @NotBlank(message = "Product  is required")
+    private ProductDto product;
 
     @NotNull(message = "Quantity is required")
     private Integer quantity;

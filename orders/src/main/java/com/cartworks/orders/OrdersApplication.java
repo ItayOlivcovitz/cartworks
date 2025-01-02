@@ -1,6 +1,6 @@
 package com.cartworks.orders;
 
-import com.cartworks.orders.dto.OrdersContactInfoDto;
+import com.cartworks.orders.dto.OrderContactInfoDto;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -23,7 +23,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
  */
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
-@EnableConfigurationProperties(value = {OrdersContactInfoDto.class})
+@EnableConfigurationProperties(value = {OrderContactInfoDto.class})
 @EnableFeignClients
 @OpenAPIDefinition(
 		info = @Info(

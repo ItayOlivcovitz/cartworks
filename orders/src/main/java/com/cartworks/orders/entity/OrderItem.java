@@ -22,8 +22,11 @@ public class OrderItem extends BaseEntity {
     @JsonBackReference // Breaks circular reference
     private Order order;
 
-    @Column(nullable = false)
-    private String productName;
+    @Column(name = "product_id", nullable = false)
+    private Long productId; // New field for product ID
+
+//    @Column(nullable = false)
+//    private String productName;
 
     @Column(nullable = false)
     private Integer quantity;
@@ -36,7 +39,8 @@ public class OrderItem extends BaseEntity {
     public String toString() {
         return "OrderItem{" +
                 "id=" + id +
-                ", productName='" + productName + '\'' +
+                ", productId=" + productId +
+               // ", productName='" + productName + '\'' +
                 ", quantity=" + quantity +
                 ", price=" + price +
                 '}';

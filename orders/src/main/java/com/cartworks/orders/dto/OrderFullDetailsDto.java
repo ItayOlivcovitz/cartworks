@@ -12,7 +12,7 @@ import java.util.Set;
 
 
 @Data
-public class OrderDto {
+public class OrderFullDetailsDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +31,5 @@ public class OrderDto {
     private String status;
 
     @NotNull(message = "Order items are required")
-    private Set<OrderItemDto> items;
+    private Set<OrderItemFullDetailsDto> items;
 }
