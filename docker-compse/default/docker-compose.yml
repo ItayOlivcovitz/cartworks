@@ -15,7 +15,7 @@ services:
       - cartworks
 
   configserver:
-    image: "itayolivcovitz/configserver:s6"
+    image: "itayolivcovitz/configserver:s8"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -23,32 +23,34 @@ services:
       rabbit:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8071/actuator/health/readiness | grep UP || exit 1"]
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 10s
-    networks:
-      - cartworks
+    extends:
+        file: common-config.yml
+        service: microservice-base-config
 
-  users:
-    image: "itayolivcovitz/users:s6"
-    container_name: users-ms
+  eurekaserver:
+    image: "itayolivcovitz/eurekaserver:s8"
+    container_name: eurekaserver-ms
     ports:
-      - "8080:8080"
-    environment:
-      SPRING_APPLICATION_NAME: "users"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://usersdb:3306/usersdb"
+      - "8070:8070"
     depends_on:
-      usersdb:
-        condition: service_healthy
       configserver:
         condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
-    networks:
-      - cartworks
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
 
   usersdb:
     image: mysql
@@ -57,36 +59,34 @@ services:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: usersdb
+      MYSQL_ROOT_PASSWORD: root
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --silent"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-    extends:
-      file: common-config.yml
-      service: microservice-db-config
     networks:
       - cartworks
 
-  orders:
-    image: "itayolivcovitz/orders:s6"
-    container_name: orders-ms
+  users:
+    image: "itayolivcovitz/users:s8"
+    container_name: users-ms
     ports:
-      - "9000:9000"
-    environment:
-      SPRING_APPLICATION_NAME: "orders"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://ordersdb:3306/ordersdb"
+      - "8080:8080"
     depends_on:
-      ordersdb:
-        condition: service_healthy
       configserver:
         condition: service_healthy
+      eurekaserver:
+          condition: service_healthy
+      usersdb:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "users"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://usersdb:3306/usersdb"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
-    networks:
-      - cartworks
+      service: microservice-eureka-config
 
   ordersdb:
     image: mysql
@@ -95,20 +95,55 @@ services:
       - "3308:3306"
     environment:
       MYSQL_DATABASE: ordersdb
+      MYSQL_ROOT_PASSWORD: root
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --silent"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+    networks:
+      - cartworks
+
+  orders:
+    image: "itayolivcovitz/orders:s8"
+    container_name: orders-ms
+    ports:
+      - "9000:9000"
+
+    depends_on:
+      ordersdb:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    environment:
+        SPRING_DATASOURCE_URL: "jdbc:mysql://ordersdb:3306/ordersdb"
+        SPRING_APPLICATION_NAME: "orders"
     extends:
-      file: common-config.yml
-      service: microservice-db-config
+          file: common-config.yml
+          service: microservice-eureka-config
+
+  productsdb:
+    image: mysql
+    container_name: productsdb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: productsdb
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - cartworks
 
   products:
-    image: "itayolivcovitz/products:s6"
+    image: "itayolivcovitz/products:s8"
     container_name: products-ms
     ports:
       - "8090:8090"
@@ -120,30 +155,11 @@ services:
         condition: service_healthy
       configserver:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
-    networks:
-      - cartworks
-
-  productsdb:
-    image: mysql
-    container_name: productsdb
-    ports:
-      - "3307:3306"
-    environment:
-      MYSQL_DATABASE: productsdb
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --silent"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    extends:
-      file: common-config.yml
-      service: microservice-db-config
-    networks:
-      - cartworks
+      service: microservice-eureka-config
 
 networks:
   cartworks:
