@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/")
 @Tag(
         name = "CRUD REST APIs for Orders in Cartworks",
         description = "CRUD REST APIs to CREATE, UPDATE, FETCH, and DELETE order details"

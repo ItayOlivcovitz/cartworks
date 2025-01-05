@@ -7,6 +7,12 @@ import java.util.List;
 
 public interface IOrderFullDetails {
 
-    public List<OrderFullDetailsDto> getOrdersByEmail(@PathVariable String email);
+    /**
+     * Retrieves all orders by a given user email.
+     *
+     * @param email The user email to retrieve orders for
+     * @return List of OrderFullDetailsDto containing order details
+     */
+    public List<OrderFullDetailsDto> getOrdersByEmail(@PathVariable String email,String correlationId);
 }
 

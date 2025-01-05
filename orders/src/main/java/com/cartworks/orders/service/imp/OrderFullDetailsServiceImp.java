@@ -28,7 +28,7 @@ public class OrderFullDetailsServiceImp implements IOrderFullDetails {
      * @return
      */
     @Override
-    public List<OrderFullDetailsDto> getOrdersByEmail(String email) {
+    public List<OrderFullDetailsDto> getOrdersByEmail(String email,String correlationId) {
         // Fetch orders by email
         List<OrderDto> ordersList = orderService.getOrdersByUserEmail(email);
 
@@ -48,7 +48,7 @@ public class OrderFullDetailsServiceImp implements IOrderFullDetails {
             for (OrderItemDto orderItemDto : orderDto.getItems()) {
                 try {
                     // Fetch product details
-                    ProductDto productDto = fetchProductById(orderItemDto.getProductId());
+                    ProductDto productDto = fetchProductById(orderItemDto.getProductId(),correlationId);
                     System.out.println("Fetched ProductDto: " + productDto);
 
                     // Populate OrderItemFullDetailsDto
@@ -82,9 +82,9 @@ public class OrderFullDetailsServiceImp implements IOrderFullDetails {
      * @param productId the product ID
      * @return the ProductDto
      */
-    private ProductDto fetchProductById(Long productId) {
+    private ProductDto fetchProductById(Long productId,String correlationId) {
         try {
-            ResponseEntity<ProductDto> productResponse = productsFeignClient.getProductById(productId);
+            ResponseEntity<ProductDto> productResponse = productsFeignClient.getProductById( correlationId,productId);
             if (productResponse != null && productResponse.getBody() != null) {
                 return productResponse.getBody();
             } else {
