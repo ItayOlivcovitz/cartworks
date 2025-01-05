@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/")
 @Tag(
         name = "CRUD REST APIs for Users in Cartworks",
         description = "CRUD REST APIs to CREATE, UPDATE, FETCH AND DELETE user details"
@@ -94,11 +94,13 @@ public class UsersController {
                     )
             )
     })
-    @GetMapping("/fetch")
-    public ResponseEntity<UserDto> getUserByEmail(@RequestParam @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Invalid email format") String email) {
+    @GetMapping("/fetch/{email}")
+    public ResponseEntity<UserDto> getUserByEmail(
+            @PathVariable @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "Invalid email format") String email) {
         UserDto userDto = userService.getUserByEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
+
 
     @Operation(
             summary = "Update User REST API",
