@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,8 @@ import java.util.List;
         description = "CRUD REST APIs to CREATE, UPDATE, FETCH AND DELETE product details"
 )
 public class ProductController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     private final ProductService productService;
 
@@ -79,7 +83,10 @@ public class ProductController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ProductsDto> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductsDto> getProductById(@PathVariable Long id,    @RequestHeader("cartworks-correlation-id") String correlationId
+                                                      ) {
+        logger.debug("cartworks-correlation-id found in ProductController: {}", correlationId);
+
         ProductsDto productDto = productService.getProductById(id);
         return ResponseEntity.status(HttpStatus.OK).body(productDto);
     }
