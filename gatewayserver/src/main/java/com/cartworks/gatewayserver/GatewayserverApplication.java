@@ -21,7 +21,9 @@ public class GatewayserverApplication {
 				.route("users_route", r -> r
 						.path("/cartworks/users/**")
 						.filters(f -> f.rewritePath("/cartworks/users/(?<segment>.*)", "/${segment}")
-								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.circuitBreaker(config -> config.setName("usersCircuitBreaker")
+										.setFallbackUri("forward:/contactSupport")))
 						.uri("lb://USERS")) // Corrected URI scheme to ensure proper routing
 
 				.route("orders_route", r -> r
