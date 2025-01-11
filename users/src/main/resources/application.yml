@@ -69,3 +69,11 @@ orders :
   onCallSupport:
     - (058) 565-9890
     - (054) 441-323
+
+logging:
+  level:
+    com:
+      cartworks:
+        users: DEBUG
+
+  

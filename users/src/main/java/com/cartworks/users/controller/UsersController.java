@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -42,6 +44,8 @@ public class UsersController {
     public UsersController(IUserService userService) {
         this.userService = userService;
     }
+    private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
+
 
 
     @Operation(
@@ -232,6 +236,7 @@ public class UsersController {
     })
     @GetMapping("/contact-info")
     public ResponseEntity<UsersContactInfoDto> getContactInfo() {
+        logger.debug("Invoking Users contact API");
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(usersContactInfoDto);

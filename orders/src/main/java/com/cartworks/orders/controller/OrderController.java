@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+
+
 @RestController
 @RequestMapping("/api/")
 @Tag(
@@ -261,6 +264,7 @@ public ResponseEntity<List<OrderDto>> getOrdersByUserEmail(
     )
     @GetMapping("/contact-info")
     public ResponseEntity<OrderContactInfoDto> getContactInfo() {
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ordersContactInfoDto);
