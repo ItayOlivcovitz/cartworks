@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @SpringBootApplication
@@ -22,16 +24,21 @@ public class GatewayserverApplication {
 						.path("/cartworks/users/**")
 						.filters(f -> f.rewritePath("/cartworks/users/(?<segment>.*)", "/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-								.circuitBreaker(config -> config.setName("usersCircuitBreaker")
-										.setFallbackUri("forward:/contactSupport")))
+								.retry(retryConfig -> retryConfig.setRetries(3)
+										.setMethods(HttpMethod.GET)
+										.setBackoff(Duration.ofMillis(100),Duration.ofMillis(1000),2,true)))
+
+
 						.uri("lb://USERS")) // Corrected URI scheme to ensure proper routing
 
 				.route("orders_route", r -> r
 						.path("/cartworks/orders/**")
 						.filters(f -> f.rewritePath("/cartworks/orders/(?<segment>.*)", "/${segment}")
-								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
-
+								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.circuitBreaker(config -> config.setName("ordersCircuitBreaker")
+										.setFallbackUri("forward:/contactSupport")))
 						.uri("lb://ORDERS")) // Corrected URI scheme to ensure proper routing
+
 
 				.route("products_route", r -> r
 						.path("/cartworks/products/**")
