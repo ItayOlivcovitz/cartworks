@@ -45,7 +45,7 @@ public class GatewayserverApplication {
 
 				.route("products_route", r -> r
 						.path("/cartworks/products/**")
-						.filters( f -> f.rewritePath("/eazybank/cards/(?<segment>.*)","/${segment}")
+						.filters( f -> f.rewritePath("/cartworks/cards/(?<segment>.*)","/${segment}")
 								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
 								.requestRateLimiter(config -> config.setRateLimiter(redisRateLimiter())
 										.setKeyResolver(userKeyResolver())))
