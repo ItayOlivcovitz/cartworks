@@ -5,6 +5,7 @@ import com.cartworks.users.dto.UserDto;
 import com.cartworks.users.dto.ErrorResponseDto;
 import com.cartworks.users.dto.UsersContactInfoDto;
 import com.cartworks.users.service.IUserService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -213,13 +214,20 @@ public class UsersController {
             )
     }
     )
-
+    @RateLimiter(name = "getJavaVersion" ,fallbackMethod = "getJavaVersionFallback")
     @GetMapping("/java-version")
     public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(environment.getProperty("JAVA_HOME"));
     }
+
+    public ResponseEntity<String> getJavaVersionFallback(Throwable throwable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Java17");
+    }
+
 
     @Operation(
             summary = "Get Contact Info REST API",
