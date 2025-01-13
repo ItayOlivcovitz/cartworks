@@ -18,17 +18,64 @@ The platform also integrates RabbitMQ as a message broker to enable communicatio
 - **User Management**: 
   - Registration and login.
   - Role-based authentication.
+  - Rate limiter configuration using Resilience4j for `/api/java-version` endpoints:
+    ```yaml
+    resilience4j:
+      ratelimiter:
+        configs:
+          default:
+            timeout-duration: 1000
+            limit-refresh-period: 5000
+            limit-for-period: 1
+    ```
+  - Accessible endpoints:
+    - `http://localhost:8080/api/java-version`
+    - `http://localhost:8072/cartworks/users/api/java-version`
 - **Product Catalog**:
   - Add, update, delete, and view products.
   - Debug messages for correlation IDs for improved logging and traceability.
 - **Order Management**:
   - Create and manage customer orders.
+  - Integrates FeignClient for inter-service communication to fetch full order details from the Product Service.
+  - Circuit breaker pattern implemented with FeignClient for resilient communication with the Product Service.
+  - Accessible endpoints:
+    - `http://localhost:9000/api/OrdersFullDetailsDto/{email}`
+    - `http://localhost:8072/cartworks/orders/api/OrdersFullDetailsDto/{email}`
 - **Service Discovery**:
   - Eureka server integration for microservice registration and discovery.
 - **Centralized Configuration**:
   - Config server for managing shared and environment-specific configurations.
 - **Gateway Routing**:
   - Gateway server to handle routing and API aggregation.
+  - Circuit breaker pattern implemented for resilient routing and fault tolerance.
+  - Retry pattern implemented for enhanced fault tolerance:
+    - Example route for **User Service**:
+      ```java
+      .route("users_route", r -> r
+          .path("/cartworks/users/**")
+          .filters(f -> f.rewritePath("/cartworks/users/(?<segment>.*)", "/${segment}")
+              .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+              .retry(retryConfig -> retryConfig.setRetries(3)
+                  .setMethods(HttpMethod.GET)
+                  .setBackoff(Duration.ofMillis(100), Duration.ofMillis(1000), 2, true)))
+          .uri("lb://USERS"))
+      ```
+  - Rate limiter pattern implemented for controlled request flow:
+    - Example route for **Product Service**:
+      ```java
+      .route("products_route", r -> r
+          .path("/cartworks/products/**")
+          .filters(f -> f.rewritePath("/cartworks/cards/(?<segment>.*)", "/${segment}")
+              .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+              .requestRateLimiter(config -> config.setRateLimiter(redisRateLimiter())
+                  .setKeyResolver(userKeyResolver())))
+          .uri("lb://PRODUCTS"))
+      ```
+    - Replenish Rate: 1 token per second.
+    - Burst Capacity: 1 token.
+    - Requested Tokens: 1 per request.
+
+  
 - **Messaging**:
   - RabbitMQ integration for message-driven communication.
 
@@ -102,3 +149,4 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## Acknowledgments
 This project was created as part of a Udemy course on microservices with Java and Spring Cloud.
+
