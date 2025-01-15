@@ -13,6 +13,17 @@ services:
       start_period: 5s
     networks:
       - cartworks
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      timeout: 10s
+      retries: 10
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
 
   configserver:
     image: "itayolivcovitz/configserver:s8"
@@ -29,8 +40,8 @@ services:
       retries: 10
       start_period: 10s
     extends:
-        file: common-config.yml
-        service: microservice-base-config
+      file: common-config.yml
+      service: microservice-base-config
 
   eurekaserver:
     image: "itayolivcovitz/eurekaserver:s8"
@@ -84,7 +95,7 @@ services:
       configserver:
         condition: service_healthy
       eurekaserver:
-          condition: service_healthy
+        condition: service_healthy
       usersdb:
         condition: service_healthy
     environment:
@@ -130,11 +141,11 @@ services:
       eurekaserver:
         condition: service_healthy
     environment:
-        SPRING_DATASOURCE_URL: "jdbc:mysql://ordersdb:3306/ordersdb"
-        SPRING_APPLICATION_NAME: "orders"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://ordersdb:3306/ordersdb"
+      SPRING_APPLICATION_NAME: "orders"
     extends:
-          file: common-config.yml
-          service: microservice-eureka-config
+      file: common-config.yml
+      service: microservice-eureka-config
 
   productsdb:
     image: mysql
@@ -190,8 +201,14 @@ services:
         condition: service_healthy
       products:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
+      SPRING_DATA_REDIS_CONNECT_TIMEOUT: 2s
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_TIMEOUT: 1s
     extends:
       file: common-config.yml
       service: microservice-eureka-config
