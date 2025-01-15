@@ -25,13 +25,23 @@ management:
     web:
       exposure:
         include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
   endpoint:
-    gateway:
+    health:
+      probes:
+        enabled: true
+    shutdown:
       enabled: true
   info:
     env:
       enabled: true
-
+  metrics:
+    tags:
+      application: ${spring.application.name}
 info:
   app:
     name: "gatewayserver"

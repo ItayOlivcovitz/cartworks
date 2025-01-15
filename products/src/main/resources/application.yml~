@@ -1,12 +1,12 @@
 server:
-  port: 9000
+  port: 8090
 spring:
   application:
-    name: "orders"
+    name: "products"
   profiles:
-     active: "prod"
+    active: "qa"
   datasource:
-    url: jdbc:mysql://localhost:3308/ordersdb
+    url: jdbc:mysql://localhost:3307/productsdb
     username: root
     password: root
   jpa:
@@ -20,10 +20,6 @@ spring:
     port: 5672
     username: "guest"
     password: "guest"
-  cloud:
-    openfeign:
-      circuitbreaker:
-        enabled: true
 
 management:
   endpoints:
@@ -39,14 +35,13 @@ management:
     health:
       probes:
         enabled: true
-    shutdown:
-      enabled: true
   info:
     env:
       enabled: true
-  metrics:
-    tags:
-      application: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
 
 eureka:
   instance:
@@ -60,19 +55,12 @@ eureka:
 
 info:
   app:
-    name: "orders"
-    description: "CartWorks Orders Application"
+    name: "products"
+    description: "CartWorks Products Application"
     version: "1.0.0"
 
 logging:
   level:
     com:
       cartworks:
-        orders: DEBUG
-resilience4j.circuitbreaker:
-  configs:
-    default:
-      slidingWindowSize: 10
-      permittedNumberOfCallsInHalfOpenState: 2
-      failureRateThreshold: 50
-      waitDurationInOpenState: 1000
+        products: DEBUG

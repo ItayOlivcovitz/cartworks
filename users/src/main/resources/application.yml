@@ -44,6 +44,10 @@ management:
   info:
     env:
       enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 eureka:
   instance:
     prefer-ip-address: true
@@ -59,9 +63,6 @@ info:
     name: "users"
     description: "CartWorks Users Application"
     version: "1.0.0"
-
-
-
 
 logging:
   level:

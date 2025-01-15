@@ -36,6 +36,14 @@ management:
     health:
       probes:
         enabled: true
+    shutdown:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 
 encrypt:
