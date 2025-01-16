@@ -248,13 +248,15 @@ services:
         condition: service_healthy
     healthcheck:
       test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     extends:
       file: common-config.yml
       service: microservice-base-config
+    environment:
+      OTEL_SERVICE_NAME: "configserver"
 
   eurekaserver:
     image: "itayolivcovitz/eurekaserver:s8"
@@ -265,15 +267,17 @@ services:
         condition: service_healthy
     healthcheck:
       test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     extends:
       file: common-config.yml
       service: microservice-configserver-config
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
+      OTEL_SERVICE_NAME: "eurekaserver"
+
 
   usersdb:
     image: mysql
@@ -282,6 +286,8 @@ services:
     environment:
       MYSQL_DATABASE: usersdb
       MYSQL_ROOT_PASSWORD: root
+      OTEL_SERVICE_NAME: "usersdb"
+
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u root --silent" ]
       interval: 10s
@@ -297,9 +303,9 @@ services:
       - "8080:8080"
     healthcheck:
       test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     depends_on:
       configserver:
@@ -311,6 +317,7 @@ services:
     environment:
       SPRING_APPLICATION_NAME: "users"
       SPRING_DATASOURCE_URL: "jdbc:mysql://usersdb:3306/usersdb"
+      OTEL_SERVICE_NAME: "users"
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -323,6 +330,7 @@ services:
     environment:
       MYSQL_DATABASE: ordersdb
       MYSQL_ROOT_PASSWORD: root
+      OTEL_SERVICE_NAME: "ordersdb"
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u root --silent" ]
       interval: 10s
@@ -332,15 +340,16 @@ services:
     networks:
       - cartworks
 
+
   orders:
     image: "itayolivcovitz/orders:s8"
     ports:
       - "9000:9000"
     healthcheck:
       test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     depends_on:
       ordersdb:
@@ -352,6 +361,8 @@ services:
     environment:
       SPRING_DATASOURCE_URL: "jdbc:mysql://ordersdb:3306/ordersdb"
       SPRING_APPLICATION_NAME: "orders"
+      OTEL_SERVICE_NAME: "orders"
+
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -363,6 +374,8 @@ services:
     environment:
       MYSQL_DATABASE: productsdb
       MYSQL_ROOT_PASSWORD: root
+      OTEL_SERVICE_NAME: "productsdb"
+
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u root --silent" ]
       interval: 10s
@@ -378,13 +391,15 @@ services:
       - "8090:8090"
     healthcheck:
       test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
+      interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
       start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "products"
       SPRING_DATASOURCE_URL: "jdbc:mysql://productsdb:3306/productsdb"
+      OTEL_SERVICE_NAME: "products"
+
     depends_on:
       productsdb:
         condition: service_healthy
@@ -415,6 +430,8 @@ services:
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_DATA_REDIS_TIMEOUT: 1s
+      OTEL_SERVICE_NAME: "gatewayserver"
+
     extends:
       file: common-config.yml
       service: microservice-eureka-config

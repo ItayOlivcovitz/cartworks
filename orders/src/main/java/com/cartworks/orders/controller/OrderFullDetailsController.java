@@ -43,8 +43,9 @@ public class OrderFullDetailsController {
                                                                             regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
                                                                             message = "Invalid email format"
                                                                         ) String email) {
-        logger.debug("cartworks-correlation-id found in OrderFullDetailsController: {}", correlationId);
+        logger.debug("Start - FetchOrdersFullDetails");
         List<OrderFullDetailsDto> orderFullDetailsDto = iOrderFullDetails.getOrdersByEmail(email,correlationId);
+        logger.debug("End - FetchOrdersFullDetails");
 
         return ResponseEntity.status(HttpStatus.SC_OK).body(orderFullDetailsDto);
     }
